@@ -22,20 +22,20 @@ class Program
         //ab hier Startzeit bzw ab hier Zeit messen
         spielzeitStoppuhr.Start();
 
-        //Console.Write("[SPIEL BEGINNEN]\nDRÜCKE EINE TASTE");
-        //Console.CursorVisible = true;
-        //Console.ReadKey(); //wartet auf jedmögliche Eingabe
+        Console.Write("[SPIEL BEGINNEN]\nDRÜCKE EINE TASTE");
+        Console.CursorVisible = true;
+        Console.ReadKey(); //wartet auf jedmögliche Eingabe
 
-        //VisuelleEffekte.PokemonSchriftzug(5);
-        //Thread.Sleep(500);
-        //Console.WriteLine("\n\n\t\t\t       [START]\n");
-        //Console.Write("\t\t          DRÜCKE EINE TASTE");
-        //Console.CursorVisible = true;
-        //Console.ReadKey();
-        //Console.Clear();
+        VisuelleEffekte.PokemonSchriftzug(5);
+        Thread.Sleep(500);
+        Console.WriteLine("\n\n\t\t\t       [START]\n");
+        Console.Write("\t\t          DRÜCKE EINE TASTE");
+        Console.CursorVisible = true;
+        Console.ReadKey();
+        Console.Clear();
 
-        //Console.CursorVisible = false;
-        //Console.WriteLine("Willkommen in der Welt der Monster!");
+        Console.CursorVisible = false;
+        Console.WriteLine("Willkommen in der Welt der Monster!");
 
         //Startort festgelegt
         int aktuellerStandort = 0;
@@ -51,6 +51,7 @@ class Program
         Monster starterMonster = StarterMonsterBestimmen(rivalenName);
         //das Monster seinem Team hinzufügen
         Team.Add(starterMonster);
+        //Test wenn (fast) alle Monster gefangen
         //AlleMonster.MonsterListe.ForEach(Team.Add);
         //Team.RemoveAt(1);
 
@@ -496,8 +497,9 @@ class Program
             Console.CursorVisible = true;
             Console.ReadKey();
 
-
+            /////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////////////////umgekehrt jetzt bzw Gegner greift an
+            //hier weitermachen mit Code kürzen/auslagern in Methoden bla
             
 
             //Attacke vom Gegner wird per Zufall auswählen
