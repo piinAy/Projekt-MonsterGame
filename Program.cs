@@ -8,7 +8,8 @@ using System.Threading;
 using Spiel;
 
 //DISCLAIMER: Das Spiel ist natürlich "vereinfacht", wobei selbst das schon eine Monsteraufgabe war (im wahrsten Sinne des Wortes haha XD )
-//Das Spiel geht solange du Lust hast Pokemon zu fangen oder zu bekämpfen (oder bis es keine mehr gibt^^), du kannst selber entscheiden wann du das Spiel beenden möchtest ;) (s. Menü im Spiel)
+//Das Spiel geht solange du Lust hast Pokemon zu fangen oder zu bekämpfen (oder bis es keine mehr gibt^^),
+//du kannst selber entscheiden wann du das Spiel beenden möchtest ;) (s. Menü im Spiel)
 //ich habe den Rivalen noch drin gelassen, Trainerkämpfe implementiere ich später einmal
 //Spieldauer ca. 20-30min wenn man alle Pokemon fangen möchte und auch ein bisschen rumspielen möchte (z.B. kämpfen, Karte, Menü)
 //GOTTA CATCH 'EM ALL! :D
@@ -174,7 +175,7 @@ class Program
                 case "1":
                     //wenn Eingabe ist 1, dann das Bisasam direkt durch das return zurückgeben und im gleichen Zug raus aus der Methode
                     return AlleMonster.MonsterListe.First(monster => monster.Name.Equals("Bisasam", StringComparison.OrdinalIgnoreCase));//vergleicht strings unabhängig ob Buchstaben groß oder klein
-                    //find durch first ersetzt, hört auf weiter zu suchen sobald gefunden
+                    //.Find durch .First ersetzt, hört auf weiter zu suchen sobald gefunden
                 case "2":
                     return AlleMonster.MonsterListe.First(monster => monster.Name.Equals("Glumanda", StringComparison.OrdinalIgnoreCase));
                 case "3":
@@ -300,7 +301,9 @@ class Program
             .Where(monster => monster.Orte.Any(ort => ort.Nummer == aktuellerStandort))
             .ToList();
 
-        //der Einfachheit halber, schließe ich bereits im Team befindende Monster aus, sodass es zu keinen Kollisionen kommen, da beide Listen auf die selbe Liste zugreifen. So ist jedes Monster nur einmal verfügbar, und dem User begegnen nicht immer wieder dieselben Monster. Wenn alle Monster gefangen, kann er zur nächsten Route gehen. Wenn die Monster freigelassen worden sind, dann kann er sie wieder dort finden, wo er sie gefangen hatte
+        //der Einfachheit halber, schließe ich bereits im Team befindende Monster aus, sodass es zu keinen Kollisionen kommen, da beide Listen auf die selbe Liste zugreifen.
+        //So ist jedes Monster nur einmal verfügbar, und dem User begegnen nicht immer wieder dieselben Monster. Wenn alle Monster gefangen, kann er zur nächsten Route gehen.
+        //Wenn die Monster freigelassen worden sind, dann kann er sie wieder dort finden, wo er sie gefangen hatte
         //später mit Interfaces bzw : ICloneable arbeiten um Listen unabhängig klonen zu können, sprich, ich kann die eine Liste ändern ohne dass die andere Liste beeinflusst wird
         monsterAufDieserRoute = monsterAufDieserRoute
             .Where(monster => !Team.Any(teamMonster => teamMonster.Name == monster.Name))
@@ -311,7 +314,8 @@ class Program
         {
             //zufälliges Monster bestimmen mit Zufallsgenerator aus der vorherigen generierten Liste
             int anzahlDerMonsterInDerNeuenListe = monsterAufDieserRoute.Count;
-            //hier reicht "nur" EIN Wert hinter der Next Methode, d.h. der Bereich geht von 0 bis automatisch zur maximalen Anzahl, exklusive der Höchstzahl. Das passt insofern, da der Index bei 0 anfängt und auch die letzte Stelle um 1 niedriger ist als die Gesamtanzahl in der Liste
+            //hier reicht "nur" EIN Wert hinter der Next Methode, d.h. der Bereich geht von 0 bis automatisch zur maximalen Anzahl, exklusive der Höchstzahl.
+            //Das passt insofern, da der Index bei 0 anfängt und auch die letzte Stelle um 1 niedriger ist als die Gesamtanzahl in der Liste
             int zufaelligerIndex = zufallsgenerator.Next(anzahlDerMonsterInDerNeuenListe);
             Monster zufallsMonster = monsterAufDieserRoute[zufaelligerIndex];
 
@@ -395,7 +399,8 @@ class Program
         }
     }
 
-    //ich übergebe die Werte vom Monster vom Team vom User an der ersten Stelle (s. oben mit index 0) welches jetzt als userMonster den Kampf antritt und das zufallsMonster ist unser gegnerMonster jetzt
+    //ich übergebe die Werte vom Monster vom Team vom User an der ersten Stelle (s. oben mit index 0),
+    //welches jetzt als userMonster den Kampf antritt und das zufallsMonster ist unser gegnerMonster jetzt
     //ein paar Sachen hier noch auslagern auf jeden Fall
     static void Kampf(Monster userMonster, Monster gegnerMonster)
     {
@@ -463,7 +468,8 @@ class Program
             //dabei noch einen Parameter für das Monster, welches angreift, da sich das abwechselt
             Angriff(userMonster, gegnerMonster, userMonster, ausgewaehlteAttacke);
 
-            //es wird geschaut wie viel Schadenspunkte es gibt in Abhängigkeit von den Typen der Attacke und des angegriffenen Monsters und auch ausgegeben wie effektiv diese Attacke war oder nicht oder nichts ausgegeben wenn es "neutral" ist
+            //es wird geschaut wie viel Schadenspunkte es gibt in Abhängigkeit von den Typen der Attacke und des angegriffenen Monsters
+            //und auch ausgegeben wie effektiv diese Attacke war oder nicht oder nichts ausgegeben wenn es "neutral" ist
             var schadenAmGegner = Typ.EffektivitaetUndSchaden(ausgewaehlteAttacke.Typ.Name, gegnerMonster.Typ.Name);
             Console.WriteLine();
             //diese werden dann von den Kraftpunkten abgezogen
@@ -536,7 +542,8 @@ class Program
             Console.WriteLine("\n\n");
         }
 
-        //ich kann auch hier schreiben wenn das userMonster besiegt worden ist, da man die Schleife sowieso nicht mehr betreten würde, da ja eines der Monster 0 KP hat, beim anderen muss ich es nach dem Angriff machen, sonst greift es an obwohl es das nicht mehr dürfte
+        //ich kann auch hier schreiben wenn das userMonster besiegt worden ist, da man die Schleife sowieso nicht mehr betreten würde,
+        //da ja eines der Monster 0 KP hat, beim anderen muss ich es nach dem Angriff machen, sonst greift es an obwohl es das nicht mehr dürfte
         Console.Write("\n\n\nDrücke eine Taste");
         Console.CursorVisible = true;
         Console.ReadKey();
@@ -563,7 +570,10 @@ class Program
 
     static void Angriff(Monster userMonster, Monster gegnerMonster, Monster angreifendesMonster, Attacke angreifendeAttacke)
     {
-        //das sieht jetzt sehr repetitiv aus, aber nur weil ich einen optischen Effekt erreichen wollte. Da die Konsole nur nacheinander Zeilen darstellen kann, ich aber eine Zeile mittendrin "aktualisieren" möchte, muss ich also den kompletten Konsoleninhalt löschen und nochmal neu ausgeben lassen aber mit dieser einen Änderung/Aktualisierung. Methode ginge leider nur bedingt da ja jedes "Bild" anders aussieht
+        //das sieht jetzt sehr repetitiv aus, aber nur weil ich einen optischen Effekt erreichen wollte.
+        //Da die Konsole nur nacheinander Zeilen darstellen kann, ich aber eine Zeile mittendrin "aktualisieren" möchte,
+        //muss ich also den kompletten Konsoleninhalt löschen und nochmal neu ausgeben lassen aber mit dieser einen Änderung/Aktualisierung.
+        //Methode ginge leider nur bedingt da ja jedes "Bild" anders aussieht
         //Bild 1, mittlere Zeile ist leer
         Console.CursorVisible = false;
 
@@ -620,7 +630,9 @@ class Program
             VisuelleEffekte.AufzaehlendePunkteZufaelligeLaenge();
 
 
-            //wir haben einen Zahlenbereich von 1-100 (da 101 ausgeschlossen). Wenn wir jetzt eine Bedingung machen, wo das Monster nur bei 50%iger Wahrscheinlichkeit gefangen werden soll, dann können wir sagen, wir akzeptieren nur die Hälfte aller Zahlen (z.B. mit <=50), das wären dann 50 von 100, bzw 50/100 bzw 50 Hundertstel = 50%. (75 von 100 dann 75% usw usw)
+            //wir haben einen Zahlenbereich von 1-100 (da 101 ausgeschlossen).
+            //Wenn wir jetzt eine Bedingung machen, wo das Monster nur bei 50%iger Wahrscheinlichkeit gefangen werden soll,
+            //dann können wir sagen, wir akzeptieren nur die Hälfte aller Zahlen (z.B. mit <=50), das wären dann 50 von 100, bzw 50/100 bzw 50 Hundertstel = 50%. (75 von 100 dann 75% usw usw)
             int zufallszahl = zufallsgenerator.Next(1, 101);
 
             if (zufallszahl <= erfolgschance)
@@ -1089,7 +1101,8 @@ class Program
     {
         Console.WriteLine("Dein Team:");
 
-        //gefangene Monster bzw Monster aus dem Team ausgeben lassen, dabei gebe ich keine doppelten Monster aus sondern lasse sie gruppieren und gebe jeweils ein Monster aus und jeweils die Anzahl davon
+        //gefangene Monster bzw Monster aus dem Team ausgeben lassen,
+        //dabei gebe ich keine doppelten Monster aus sondern lasse sie gruppieren und gebe jeweils ein Monster aus und jeweils die Anzahl davon
         var gruppierteMonster = Team.GroupBy(monster => monster.Name);
         int position = 1;
 
