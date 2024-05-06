@@ -84,7 +84,7 @@ namespace Spiel
 }
 
 //Fadenschuss und Teleporter ziehen keine Schadenspunkte ab
-//Absorber fügt dem Ausführer eigentlich die abgezogenen Kraftpunkte des Gegner hinzu
+//Absorber fügt dem Ausführer eigentlich die abgezogenen Kraftpunkte des Gegners hinzu
 //oder so programmieren aber für diesen Anwendungsfall eher ungeeignet
 
 //Flügelschlag, Blättertanz und Säure ohne Umlaute schreiben?
