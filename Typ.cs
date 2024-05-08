@@ -31,40 +31,40 @@ namespace Spiel
 
         //Methode, wie die Typen sich zueinander verhalten
         //habe wirkungslos ausgeschlossen und nicht alle Effektivitäten dazu genommen
+        private static readonly List<string> sehrEffektiveKombinationen = new()
+        {
+            "Wasser Feuer",
+            "Feuer Pflanze",
+            "Pflanze Wasser",
+            "Flug Kaefer",
+            "Elektro Flug",
+            "Elektro Wasser",
+            "Feuer Kaefer",
+            "Feuer Eis",
+            "Kampf Normal",
+            "Kampf Flug",
+            "Wasser Gestein",
+            "Flug Kampf",
+            "Gift Pflanze",
+            "Boden Elektro",
+            "Boden Gestein",
+            "Gestein Feuer",
+            "Gestein Eis",
+            "Kaefer Pflanze",
+            "Geist Psycho",
+            "Psycho Kampf",
+            "Psycho Gift",
+            "Eis Pflanze",
+            "Eis Drache"
+        };
+
         public static int EffektivitaetUndSchaden(string angreiferTyp, string verteidigerTyp)
         {
-            List<string> sehrEffektiveKombinationen = new List<string>
-            {
-                "Wasser Feuer",
-                "Feuer Pflanze",
-                "Pflanze Wasser",
-                "Flug Kaefer",
-                "Elektro Flug",
-                "Elektro Wasser",
-                "Feuer Kaefer",
-                "Feuer Eis",
-                "Kampf Normal",
-                "Kampf Flug",
-                "Wasser Gestein",
-                "Flug Kampf",
-                "Gift Pflanze",
-                "Boden Elektro",
-                "Boden Gestein",
-                "Gestein Feuer",
-                "Gestein Eis",
-                "Kaefer Pflanze",
-                "Geist Psycho",
-                "Psycho Kampf",
-                "Psycho Gift",
-                "Eis Pflanze",
-                "Eis Drache"
-            };
-
-            string kombination = $"{angreiferTyp} {verteidigerTyp}";
+            var kombination = $"{angreiferTyp} {verteidigerTyp}";
 
             if (sehrEffektiveKombinationen.Contains(kombination))
             {
-                //schreibe ich lieber in der program.cs
+                //schreibe ich lieber in der program.cs?
                 //Console.WriteLine(" die Attacke ist sehr effektiv!");
                 return 3; //wie viel Schadenspunkte abgezogen werden sollen
             }

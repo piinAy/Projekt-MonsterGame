@@ -213,7 +213,7 @@ class Program
                 return AlleMonster.MonsterListe.First(monster => monster.Name.Equals("Bisasam", StringComparison.OrdinalIgnoreCase));
             default:
                 throw new Exception("Monster nicht gefunden.");
-                //besser eine Exception werfen anstatt return null (weil wollte irgendeinen Wert zurückgeben, also habe ich mich für den Wert "nichts" entschieden)
+                //besser eine Exception werfen anstatt return null (weil wollte davor irgendeinen Wert zurückgeben bzw den Wert "nichts")
         }
     }
 
@@ -414,6 +414,7 @@ class Program
 
         Console.CursorVisible = false;
 
+        //in der "mittleren Zeile" lasse ich unterschiedlichen Text ausgeben, ansonsten einen leeren string
         KraftpunkteAnzeigenLassen(gegnerMonster, userMonster, string.Empty);
 
 
@@ -421,9 +422,9 @@ class Program
         //und sonst auch zurück option von kampf wenn man doch fangen/flüchten will
         //wenn hier gefangen oder geflohen, dann Kraftpunkte zurücksetzen nicht vergessen!
 
-        //Konsoleninhalt nochmal ausgegeben mit Satz in der Mitte
         Thread.Sleep(1250);
 
+        //Konsoleninhalt nochmal ausgegeben mit Satz in der Mitte
         KraftpunkteAnzeigenLassen(gegnerMonster, userMonster, "Der Kampf beginnt!");
 
         Console.WriteLine("\n\n");
@@ -480,22 +481,8 @@ class Program
             KraftpunkteAnzeigenLassen(gegnerMonster, userMonster, Schaden(schadenAmGegner));
 
             //wenn Gegner besiegt wurde
-            if (gegnerMonster.Kraftpunkte <= 0)
+            if (IstBesiegt(gegnerMonster, userMonster, gegnerMonsterAusgangsKP, userMonsterAusgangsKP))
             {
-                //da ich keine Minuszahlen will
-                gegnerMonster.Kraftpunkte = 0;
-
-                Console.CursorVisible = false;
-                Thread.Sleep(1000);
-                Console.WriteLine($"\n\n{gegnerMonster.Name} wurde besiegt!");
-                zaehlerGewonnen++;
-                //level up?
-                //Attacken erlernen?
-
-                //Kraftpunkte nach Kampf wieder zurücksetzen
-                userMonster.Kraftpunkte = userMonsterAusgangsKP;
-                gegnerMonster.Kraftpunkte = gegnerMonsterAusgangsKP;
-
                 break;
             }
 
@@ -509,13 +496,13 @@ class Program
             
 
             //Attacke vom Gegner wird per Zufall auswählen
-            Attacke gegnerAttacke = attackenGegnerMonster[zufallsgenerator.Next(attackenGegnerMonster.Count)];
+            var gegnerAttacke = attackenGegnerMonster[zufallsgenerator.Next(attackenGegnerMonster.Count)];
 
             //hier ist der Parameter für das angreifende Monster und die Attacke jetzt vom Gegner
             Angriff(userMonster, gegnerMonster, gegnerMonster, gegnerAttacke);
 
             //Schaden am eigenen Monster und Effektivitätausgabe
-            int schadenAmEigenenMonster = Typ.EffektivitaetUndSchaden(gegnerAttacke.Typ.Name, userMonster.Typ.Name);
+            var schadenAmEigenenMonster = Typ.EffektivitaetUndSchaden(gegnerAttacke.Typ.Name, userMonster.Typ.Name);
             //Abzug der Kraftpunkte des eigenen Monsters
             userMonster.Kraftpunkte -= schadenAmEigenenMonster;
 
@@ -524,19 +511,11 @@ class Program
             KraftpunkteAnzeigenLassen(gegnerMonster, userMonster, Schaden(schadenAmEigenenMonster));
 
             //wenn User besiegt wurde
-            if (userMonster.Kraftpunkte <= 0)
+            if (IstBesiegt(userMonster, gegnerMonster, userMonsterAusgangsKP, gegnerMonsterAusgangsKP))
             {
-                userMonster.Kraftpunkte = 0;
-
-                Console.CursorVisible = false;
-                Thread.Sleep(1000);
-                Console.WriteLine($"\n\n{userMonster.Name} wurde besiegt!");
-                zaehlerVerloren++;
-                userMonster.Kraftpunkte = userMonsterAusgangsKP;
-                gegnerMonster.Kraftpunkte = gegnerMonsterAusgangsKP;
-
                 break;
             }
+
             //jetzt fängt es wieder von vorne an bzw der User darf dann wieder eine Attacke auswählen
             Thread.Sleep(1000);
             Console.WriteLine("\n\n");
@@ -614,6 +593,30 @@ class Program
         return $" . . . es wurde {schaden} KP abgezogen! Die Attacke ist sehr effektiv!";
     }
 
+    static bool IstBesiegt(Monster angegriffenesMonster, Monster angreifendesMonster, int angegriffenesMonsterAusgangsKP, int angreifendesMonsterAusgangsKP)
+    {
+        if (angegriffenesMonster.Kraftpunkte <= 0)
+        {
+            //da ich keine Minuszahlen will
+            angegriffenesMonster.Kraftpunkte = 0;
+
+            Console.CursorVisible = false;
+            Thread.Sleep(1000);
+            Console.WriteLine($"\n\n{angegriffenesMonster.Name} wurde besiegt!");
+            zaehlerGewonnen++;
+            //level up?
+            //Attacken erlernen?
+
+            //Kraftpunkte nach Kampf wieder zurücksetzen
+            angegriffenesMonster.Kraftpunkte = angegriffenesMonsterAusgangsKP;
+            angreifendesMonster.Kraftpunkte = angreifendesMonsterAusgangsKP;
+
+            return true;
+        }
+
+        return false;
+    }
+
     static void MonsterFangen(Monster zufallsMonsterFangen, string userName)
     {
 
@@ -644,46 +647,8 @@ class Program
 
                 Console.WriteLine($"{Team.Count} Monster von {AlleMonster.MonsterListe.Count} gefangen.\n");
 
-                if (AlleMonsterGefangen())
+                if (AlleMonsterGefangen(userName))
                 {
-                    Console.CursorVisible = true;
-                    Console.Write("\n\nDrücke eine Taste");
-                    Console.ReadKey();
-                    Console.CursorVisible = false;
-                    Console.Clear();
-                    Thread.Sleep(1000);
-                    Console.WriteLine("Du hast ALLE Monster gefangen? ");
-                    Thread.Sleep(1250);
-                    Console.WriteLine("\nWow...nicht schlecht");
-                    Thread.Sleep(1250);
-                    Console.WriteLine("\n...Hast du keine Hobbies oder so? XD");
-                    Thread.Sleep(1500);
-                    Console.WriteLine("\nSpaß beiseite! Hier eine Belohnung für dich!");
-                    Thread.Sleep(1000);
-                    Console.Write("\n\nDrücke eine Taste, Tipp: Fenster auf Vollbild machen: ");
-                    Console.CursorVisible = true;
-                    Console.ReadKey();
-                    Console.CursorVisible = false;
-                    Console.Clear();
-                    Thread.Sleep(1000);
-                    VisuelleEffekte.BelohnungASCII();
-                    Thread.Sleep(1000);
-                    Console.WriteLine("\n\n\nGut gemacht! Professor Eich wäre Stolz auf dich!");
-                    Thread.Sleep(1000);
-                    Console.Write("\n\nDrücke eine Taste");
-                    Console.CursorVisible = true;
-                    Console.ReadKey();
-                    Console.CursorVisible = false;
-                    Console.Clear();
-
-                    DeinTeamNacheinanderAbspielend();
-                    Console.WriteLine();
-                    Console.WriteLine("DEINE STATISTIK");
-                    Console.WriteLine($"Spielername:\t\t{userName}");
-                    MenueDaten();
-                    Console.Write("\n\nDrücke eine Taste");
-                    Console.CursorVisible = true;
-                    Console.ReadKey();
                     return;
                 }
                 Console.WriteLine("\n[T]EAM\t\t[ENTER] Zurück");
@@ -698,18 +663,17 @@ class Program
                         TeamAnschauen();
                         return;
                     }
-                    else if (string.IsNullOrWhiteSpace(benutzerEingabe))
+                    if (string.IsNullOrWhiteSpace(benutzerEingabe))
                     {
                         return;
                     }
-                    else
-                    {
-                        Console.Clear();
-                        Console.WriteLine("\nUngültige Eingabe!\n\n");
-                        Console.WriteLine($"{Team.Count} Monster von {AlleMonster.MonsterListe.Count} gefangen.\n");
-                        Console.WriteLine("\n[T]EAM\t\t[ENTER] Zurück");
-                        Console.Write("\nBitte wiederhole: ");
-                    }
+
+                    Console.Clear();
+                    Console.WriteLine("\nUngültige Eingabe!\n\n");
+                    Console.WriteLine($"{Team.Count} Monster von {AlleMonster.MonsterListe.Count} gefangen.\n");
+                    Console.WriteLine("\n[T]EAM\t\t[ENTER] Zurück");
+                    Console.Write("\nBitte wiederhole: ");
+
                 }
 
             }
@@ -736,7 +700,7 @@ class Program
                         Console.ReadKey();
                         return;
                     }
-                    else if (benutzerEingabe == "J" || benutzerEingabe == "JA" || benutzerEingabe == "1")
+                    if (benutzerEingabe == "J" || benutzerEingabe == "JA" || benutzerEingabe == "1")
                     {
                         break; // Raus aus der do-while-Schleife
                     }
@@ -771,7 +735,7 @@ class Program
     }
 
     //diese Methode ist eventuell nur vorübergehend bis ich das Problem mit doppelten Monstern gelöst habe
-    static bool AlleMonsterGefangen()
+    static bool AlleMonsterGefangen(string userName)
     {
         //wir gehen durch die ganze MonsterListe durch und schauen ob die Monster in unserem Team sind
         foreach (var monster in AlleMonster.MonsterListe)
@@ -784,7 +748,50 @@ class Program
         }
 
         //ansonsten wenn wir nicht vorzeitig mit false rausgehen dann haben wir alle Monster und wir geben true zurück
+        AlleMonsterGefangenText(userName);
         return true;
+    }
+
+    static void AlleMonsterGefangenText(string userName)
+    {
+        Console.CursorVisible = true;
+        Console.Write("\n\nDrücke eine Taste");
+        Console.ReadKey();
+        Console.CursorVisible = false;
+        Console.Clear();
+        Thread.Sleep(1000);
+        Console.WriteLine("Du hast ALLE Monster gefangen? ");
+        Thread.Sleep(1250);
+        Console.WriteLine("\nWow...nicht schlecht");
+        Thread.Sleep(1250);
+        Console.WriteLine("\n...Hast du keine Hobbies oder so? XD");
+        Thread.Sleep(1500);
+        Console.WriteLine("\nSpaß beiseite! Hier eine Belohnung für dich!");
+        Thread.Sleep(1000);
+        Console.Write("\n\nDrücke eine Taste, Tipp: Fenster auf Vollbild machen: ");
+        Console.CursorVisible = true;
+        Console.ReadKey();
+        Console.CursorVisible = false;
+        Console.Clear();
+        Thread.Sleep(1000);
+        VisuelleEffekte.BelohnungASCII();
+        Thread.Sleep(1000);
+        Console.WriteLine("\n\n\nGut gemacht! Professor Eich wäre Stolz auf dich!");
+        Thread.Sleep(1000);
+        Console.Write("\n\nDrücke eine Taste");
+        Console.CursorVisible = true;
+        Console.ReadKey();
+        Console.CursorVisible = false;
+        Console.Clear();
+
+        DeinTeam("Deine gefangenen Monster:", 20);
+        Console.WriteLine();
+        Console.WriteLine("DEINE STATISTIK");
+        Console.WriteLine($"Spielername:\t\t{userName}");
+        MenueDaten();
+        Console.Write("\n\nDrücke eine Taste");
+        Console.CursorVisible = true;
+        Console.ReadKey();
     }
 
     static bool Menue(string userName, int aktuellerStandort)
@@ -808,34 +815,33 @@ class Program
                 {
                     return false; //raus aus der Methode aber Spiel wird nicht beendet, also nur zurück zur Routenauswahl
                 }
-                else if (benutzerEingabe.ToUpper() == "T")
+                if (benutzerEingabe.ToUpper() == "T")
                 {
                     Console.Clear();
                     TeamAnschauen();
                     Console.CursorVisible = true;
                     break;
                 }
-                else if (benutzerEingabe.ToUpper() == "K")
+                if (benutzerEingabe.ToUpper() == "K")
                 {
                     KarteAnschauen(aktuellerStandort);
                     break;
                 }
-                else if (benutzerEingabe.ToUpper() == "S")
+                if (benutzerEingabe.ToUpper() == "S")
                 {
                     Console.Clear();
                     return SpielBeenden(); //also je nach dem true oder false
                 }
-                else
-                {
-                    Console.Clear();
-                    Console.WriteLine("INFO");
-                    Console.WriteLine($"Spielername:\t\t{userName}");
-                    MenueDaten();
-                    Console.WriteLine("\n[T]EAM\t[K]ARTE"); //[BEUTEL]
-                    Console.WriteLine("\n\n[ENTER] Zurück\t\t[S]piel beenden");
-                    Console.WriteLine("\n\nUngültige Eingabe.");
-                    Console.Write("Eingabe wiederholen: ");
-                }
+
+                Console.Clear();
+                Console.WriteLine("INFO");
+                Console.WriteLine($"Spielername:\t\t{userName}");
+                MenueDaten();
+                Console.WriteLine("\n[T]EAM\t[K]ARTE"); //[BEUTEL]
+                Console.WriteLine("\n\n[ENTER] Zurück\t\t[S]piel beenden");
+                Console.WriteLine("\n\nUngültige Eingabe.");
+                Console.Write("Eingabe wiederholen: ");
+
             }
         }
     }
@@ -880,21 +886,7 @@ class Program
 
                     if (benutzerEingabe == "J" || benutzerEingabe == "JA")
                     {
-                        Console.CursorVisible = false;
-                        Console.Clear();
-                        Thread.Sleep(1250);
-                        Console.Write("Schwach");
-                        Thread.Sleep(750);
-                        VisuelleEffekte.AufzaehlendePunkte(3);
-                        Thread.Sleep(750);
-                        Console.WriteLine("\nNein Spaß :P");
-                        Thread.Sleep(1250);
-                        Console.WriteLine("\nDanke für's Spielen!");
-                        Console.WriteLine("Bis zum nächsten Mal! Byeeeeee");
-                        Thread.Sleep(1250);
-                        Console.WriteLine("\n\nDEINE STATISTIK");
-                        MenueDaten();
-                        Console.WriteLine("\n\n\n\n\n\n\n\n\n\n\n");
+                        SpielBeendenText();
                         return true; //hier gebe ich den Wert true an Menue zurück wenn man das Spiel beenden will den wir für die StandortBestimmen Methode brauchen um da rauszukommen
                     }
                     if (benutzerEingabe == "N" || benutzerEingabe == "NEIN")
@@ -928,12 +920,31 @@ class Program
         }
     }
 
+    static void SpielBeendenText()
+    {
+        Console.CursorVisible = false;
+        Console.Clear();
+        Thread.Sleep(1250);
+        Console.Write("Schwach");
+        Thread.Sleep(750);
+        VisuelleEffekte.AufzaehlendePunkte(3);
+        Thread.Sleep(750);
+        Console.WriteLine("\nNein Spaß :P");
+        Thread.Sleep(1250);
+        Console.WriteLine("\nDanke für's Spielen!");
+        Console.WriteLine("Bis zum nächsten Mal! Byeeeeee");
+        Thread.Sleep(1250);
+        Console.WriteLine("\n\nDEINE STATISTIK");
+        MenueDaten();
+        Console.WriteLine("\n\n\n\n\n\n\n\n\n\n\n");
+    }
+
     static void TeamAnschauen()
     {
         while (true)
         {
             bool aeußereSchleifeVerlassen = false;
-            DeinTeam();
+            DeinTeam("Dein Team:");
             Console.WriteLine("\n\n[A]ktives Monster tauschen\t[F]reilassen");
             Console.WriteLine("\n[ENTER] Zurück");
             Console.Write("\nDeine Wahl: ");
@@ -946,7 +957,7 @@ class Program
                     if (Team.Count > 1)
                     {
                         Console.Clear();
-                        DeinTeam();
+                        DeinTeam("Dein Team:");
                         Console.WriteLine("\n\n\n\n[ENTER] Zurück");
                         Console.Write("\nGib die aktuelle Position des Monsters ein, welches du an die erste Stelle zu setzen möchtest (oder gehe zurück): ");
 
@@ -960,7 +971,7 @@ class Program
                             {
                                 Console.Clear();
 
-                                DeinTeam();
+                                DeinTeam("Dein Team:");
                                 Console.WriteLine("\n\n\n\n[ENTER] Zurück");
                                 Console.WriteLine($"\n{Team[0].Name} ist schon auf Position 1 ;)");
                                 Console.Write("\nGib die aktuelle Position des Monsters ein, welches du an die erste Stelle zu setzen möchtest (oder gehe zurück): ");
@@ -975,7 +986,7 @@ class Program
                                 Team.Insert(0, zuBewegendesMonster);
 
                                 Console.Clear();
-                                DeinTeam();
+                                DeinTeam("Dein Team:");
                                 Console.WriteLine($"\n{zuBewegendesMonster.Name} wurde an die erste Stelle verschoben!");
                                 Console.WriteLine("\n\n[ENTER] Zurück");
                                 Console.Write("\nGib die aktuelle Position des Monsters ein, welches du an die erste Stelle zu setzen möchtest (oder gehe zurück): ");
@@ -991,7 +1002,7 @@ class Program
                             {
                                 Console.Clear();
 
-                                DeinTeam();
+                                DeinTeam("Dein Team:");
                                 Console.WriteLine("\n\n\n\n[ENTER] Zurück");
                                 Console.Write("\nUngültige Eingabe. Bitte gib die aktuelle Position des Monsters ein, welches du an die erste Stelle zu setzen möchtest (oder gehe zurück): ");
                             }
@@ -1002,7 +1013,7 @@ class Program
 
                         Console.Clear();
 
-                        DeinTeam();
+                        DeinTeam("Dein Team:");
                         Console.WriteLine("\n\n[A]ktives Monster tauschen\t[F]reilassen");
                         Console.WriteLine("\n[ENTER] Zurück");
                         Console.WriteLine("\nWas willst du da bitte tauschen xDDD");
@@ -1016,7 +1027,7 @@ class Program
                     {
                         Console.Clear();
 
-                        DeinTeam();
+                        DeinTeam("Dein Team:");
                         Console.WriteLine("\n\n\n\n[ENTER] Zurück");
                         Console.Write("\nGib die Position des Monsters ein, welches du freilassen möchtest (oder gehe zurück): ");
 
@@ -1034,7 +1045,7 @@ class Program
                                 {
                                     Console.Clear();
 
-                                    DeinTeam();
+                                    DeinTeam("Dein Team:");
                                     Console.WriteLine($"\n{freigelassenesMonster.Name} wurde freigelassen!");
                                     Console.WriteLine("\n\n[ENTER] Zurück");
                                     Console.Write("\nGib die Position des Monsters ein, welches du freilassen möchtest (oder gehe zurück): ");
@@ -1046,7 +1057,7 @@ class Program
                                     aeußereSchleifeVerlassen = true;
                                     Console.Clear();
 
-                                    DeinTeam();
+                                    DeinTeam("Dein Team:");
                                     Console.WriteLine($"\n{freigelassenesMonster.Name} wurde freigelassen!");
                                     Console.Write("\n\n\nDrücke eine Taste um zurückzukehren");
                                     Console.ReadKey();
@@ -1063,7 +1074,7 @@ class Program
                             {
                                 Console.Clear();
 
-                                DeinTeam();
+                                DeinTeam("Dein Team:");
                                 Console.WriteLine("\n\n\n\n[ENTER] Zurück");
                                 Console.Write("\nUngültige Eingabe. Bitte gib die Position des Monsters ein, welches du freilassen möchtest (oder gehe zurück): ");
                             }
@@ -1073,7 +1084,7 @@ class Program
                     {
                         Console.Clear();
 
-                        DeinTeam();
+                        DeinTeam("Dein Team:");
                         Console.WriteLine("\n\n[A]ktives Monster tauschen\t[F]reilassen");
                         Console.WriteLine("\n[ENTER] Zurück");
                         Console.WriteLine("\nDu darfst nicht 0 Monster haben!");
@@ -1088,7 +1099,7 @@ class Program
                 {
                     Console.Clear();
 
-                    DeinTeam();
+                    DeinTeam("Dein Team:");
                     Console.WriteLine("\n\n[A]ktives Monster tauschen\t[F]reilassen");
                     Console.WriteLine("\n[ENTER] Zurück");
                     Console.Write("\nUngültige Eingabe. Bitte wiederholen: ");
@@ -1097,12 +1108,13 @@ class Program
         }
     }
 
-    static void DeinTeam()
+    static void DeinTeam(string text, int dauerInMs = 0)
     {
-        Console.WriteLine("Dein Team:");
+        Console.WriteLine(text);
 
         //gefangene Monster bzw Monster aus dem Team ausgeben lassen,
         //dabei gebe ich keine doppelten Monster aus sondern lasse sie gruppieren und gebe jeweils ein Monster aus und jeweils die Anzahl davon
+        //aktuell nicht nötig, da ich doppelte Monster wieder ausgeschlossen habe, belasse ich aber erst so, falls ich das wieder ändern will
         var gruppierteMonster = Team.GroupBy(monster => monster.Name);
         int position = 1;
 
@@ -1111,31 +1123,12 @@ class Program
             foreach (var monster in monsterGruppe)
             {
                 Console.CursorVisible = false;
+                Thread.Sleep(dauerInMs);
                 Console.CursorVisible = true;
                 Console.WriteLine($"{position}. {monsterGruppe.Count()}x {monster.Name} (Typ: {monster.Typ.Name})");
                 position++;
                 //Kraftpunkte und Attacken auch anzeigen lassen?
                 //dann Möglichkeit Attacken zu erlernen oder zu entfernen? Dann aber Items dazu
-            }
-        }
-    }
-
-    static void DeinTeamNacheinanderAbspielend()
-    {
-        Console.WriteLine("Deine gefangenen Monster:");
-
-        var gruppierteMonster = Team.GroupBy(monster => monster.Name);
-        int position = 1;
-
-        foreach (var monsterGruppe in gruppierteMonster)
-        {
-            foreach (var monster in monsterGruppe)
-            {
-                Console.CursorVisible = false;
-                Thread.Sleep(20);
-                Console.CursorVisible = true;
-                Console.WriteLine($"{position}. {monsterGruppe.Count()}x {monster.Name} (Typ: {monster.Typ.Name})");
-                position++;
             }
         }
     }
