@@ -483,6 +483,12 @@ class Program
             //wenn Gegner besiegt wurde
             if (IstBesiegt(gegnerMonster, userMonster, gegnerMonsterAusgangsKP, userMonsterAusgangsKP))
             {
+                zaehlerGewonnen++;
+
+                //level up?
+                //Attacken erlernen?
+                Console.WriteLine($"\n\nKämpfe gewonnen:\t{zaehlerGewonnen}");
+                Console.WriteLine($"Kämpfe verloren:\t{zaehlerVerloren}");
                 break;
             }
 
@@ -513,6 +519,11 @@ class Program
             //wenn User besiegt wurde
             if (IstBesiegt(userMonster, gegnerMonster, userMonsterAusgangsKP, gegnerMonsterAusgangsKP))
             {
+                zaehlerVerloren++;
+
+                //geld abziehen bei Trainerkampf zb?
+                Console.WriteLine($"\n\nKämpfe gewonnen:\t{zaehlerGewonnen}");
+                Console.WriteLine($"Kämpfe verloren:\t{zaehlerVerloren}");
                 break;
             }
 
@@ -603,9 +614,6 @@ class Program
             Console.CursorVisible = false;
             Thread.Sleep(1000);
             Console.WriteLine($"\n\n{angegriffenesMonster.Name} wurde besiegt!");
-            zaehlerGewonnen++;
-            //level up?
-            //Attacken erlernen?
 
             //Kraftpunkte nach Kampf wieder zurücksetzen
             angegriffenesMonster.Kraftpunkte = angegriffenesMonsterAusgangsKP;
