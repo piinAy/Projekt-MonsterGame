@@ -52,9 +52,11 @@ class Program
         Monster starterMonster = StarterMonsterBestimmen(rivalenName);
         //das Monster seinem Team hinzufügen
         Team.Add(starterMonster);
-        //Test wenn (fast) alle Monster gefangen
-        //AlleMonster.MonsterListe.ForEach(Team.Add);
-        //Team.RemoveAt(1);
+        //Test wenn (fast) alle Monster gefangen, wenn ich bisasam als startermonster wähle
+        //AlleMonster.MonsterListe.ForEach(Team.Add);//ich füge alle Monster aus der Liste dem Team hinzu
+        //Team.RemoveAt(0); //bisasam entfernen, obwohl 2 bisasams in dem Fall nicht schlimm gewesen wäre
+        //Team.RemoveAt(1); //glumanda entfernen welches ich dann in Route 1 fange um "AlleMonsterGefangen" zu initiieren
+
 
         Console.Clear();
         Console.WriteLine($"Du hast {starterMonster.Name} gewählt. Gute Wahl!");
@@ -100,7 +102,7 @@ class Program
             string? userName = Console.ReadLine(); //eher var statt string weil könnte auch NULL sein
             //? = bedeutet, dass es auch NULL sein darf
 
-            if (string.IsNullOrWhiteSpace(userName) || IstEingabeUngueltig(userName))
+            if (!IstEingabeValide(userName))
             {
                 Console.Clear();
                 Console.WriteLine("Eingabe ungültig.");
@@ -118,16 +120,9 @@ class Program
     }
 
     //Überprüfung wenn mindestens ein Zeichen kein Buchstabe ist, dann Eingabe ungültig
-    static bool IstEingabeUngueltig(string eingabe)
+    static bool IstEingabeValide(string eingabe)
     {
-        foreach (char zeichen in eingabe)
-        {
-            if (!char.IsLetter(zeichen))
-            {
-                return true; //wenn ein Zeichen gefunden worden ist welches kein Buchstabe ist, dann true und raus
-            }
-        }
-        return false;
+        return !string.IsNullOrWhiteSpace(eingabe) && eingabe.All(char.IsLetter);
     }
 
     static string RivalenNameBestimmen(string userName)
@@ -147,7 +142,7 @@ class Program
                 Console.WriteLine("Dein Rivale kann nicht denselben Namen wie du haben!");
                 Console.Write("\nBitte gib einen anderen Namen für deinen Rivalen ein: ");
             }
-            else if(string.IsNullOrWhiteSpace(rivalenName) || IstEingabeUngueltig(rivalenName))
+            else if(string.IsNullOrWhiteSpace(rivalenName) || IstEingabeValide(rivalenName))
             {
                 Console.Clear();
                 Console.WriteLine("Eingabe wurde nicht erkannt.");
@@ -425,6 +420,7 @@ class Program
         Thread.Sleep(1250);
 
         //Konsoleninhalt nochmal ausgegeben mit Satz in der Mitte
+        //oder mit Console.Title arbeiten
         KraftpunkteAnzeigenLassen(gegnerMonster, userMonster, "Der Kampf beginnt!");
 
         Console.WriteLine("\n\n");
@@ -639,7 +635,6 @@ class Program
             Console.WriteLine("*Wirft Pokeball*");
             Console.WriteLine();
             VisuelleEffekte.AufzaehlendePunkteZufaelligeLaenge();
-
 
             //wir haben einen Zahlenbereich von 1-100 (da 101 ausgeschlossen).
             //Wenn wir jetzt eine Bedingung machen, wo das Monster nur bei 50%iger Wahrscheinlichkeit gefangen werden soll,
