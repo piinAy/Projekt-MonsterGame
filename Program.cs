@@ -299,7 +299,6 @@ class Program
         //der Einfachheit halber, schließe ich bereits im Team befindende Monster aus, sodass es zu keinen Kollisionen kommen, da beide Listen auf die selbe Liste zugreifen.
         //So ist jedes Monster nur einmal verfügbar, und dem User begegnen nicht immer wieder dieselben Monster. Wenn alle Monster gefangen, kann er zur nächsten Route gehen.
         //Wenn die Monster freigelassen worden sind, dann kann er sie wieder dort finden, wo er sie gefangen hatte
-        //später mit Interfaces bzw : ICloneable arbeiten um Listen unabhängig klonen zu können, sprich, ich kann die eine Liste ändern ohne dass die andere Liste beeinflusst wird
         monsterAufDieserRoute = monsterAufDieserRoute
             .Where(monster => !Team.Any(teamMonster => teamMonster.Name == monster.Name))
             .ToList();
@@ -737,7 +736,7 @@ class Program
         }
     }
 
-    //diese Methode ist eventuell nur vorübergehend bis ich das Problem mit doppelten Monstern gelöst habe
+    //Methode um doppelte Monster auszuschließen, evtl nachher zulassen
     static bool AlleMonsterGefangen(string userName)
     {
         //wir gehen durch die ganze MonsterListe durch und schauen ob die Monster in unserem Team sind
@@ -1197,6 +1196,9 @@ class Program
 }
 
 //TO DO's:
+//REFAKTORISIEREN!
+//
+//mehrfaches eines Monsters ermöglichen?
 //Level ups ermöglichen? nach 1 Kampf +1 lvl, dann erst nach 2 kämpfen +1 etc, open end?
 //Entwicklungen durch Level erreichen und Entwicklungssteinen?
 //Items auf Routen sammeln und in einem Beutel?
