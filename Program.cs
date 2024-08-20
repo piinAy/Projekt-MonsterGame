@@ -1198,7 +1198,7 @@ class Program
 //TO DO's:
 //REFAKTORISIEREN!
 //
-//mehrfaches eines Monsters ermöglichen?
+//mehrfaches Fangen eines Monsters ermöglichen?
 //Level ups ermöglichen? nach 1 Kampf +1 lvl, dann erst nach 2 kämpfen +1 etc, open end?
 //Entwicklungen durch Level erreichen und Entwicklungssteinen?
 //Items auf Routen sammeln und in einem Beutel?
