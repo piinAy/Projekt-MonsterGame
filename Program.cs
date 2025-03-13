@@ -142,7 +142,7 @@ class Program
                 Console.WriteLine("Dein Rivale kann nicht denselben Namen wie du haben!");
                 Console.Write("\nBitte gib einen anderen Namen für deinen Rivalen ein: ");
             }
-            else if(string.IsNullOrWhiteSpace(rivalenName) || IstEingabeValide(rivalenName))
+            else if(!IstEingabeValide(rivalenName))
             {
                 Console.Clear();
                 Console.WriteLine("Eingabe wurde nicht erkannt.");
